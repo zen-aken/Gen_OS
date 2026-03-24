@@ -29,7 +29,8 @@
 
 # Compiled for both architectures
 SRCS_COMMON := \
-    src/kernel.c
+    src/kernel.c \
+    src/framebuffer/framebuffer.c
 
 # AArch64-specific sources
 SRCS_AARCH64 :=
@@ -38,7 +39,7 @@ SRCS_AARCH64 :=
 SRCS_X86_64 :=
 
 # -----------------------------------------------------------------------------
-# Architecture selection (default: aarch64)
+# Architecture selection (default: x86_64)
 # -----------------------------------------------------------------------------
 ARCH ?= x86_64
 
@@ -100,7 +101,8 @@ QEMU_FLAGS_X86_64  := \
                    -m 128M \
                    -bios /usr/share/edk2-ovmf/x64/OVMF.4m.fd \
                    -cdrom build/x86_64/os.iso \
-                   -serial stdio
+                   -serial stdio \
+                   -d int
 
 # -----------------------------------------------------------------------------
 # Select variables based on ARCH
