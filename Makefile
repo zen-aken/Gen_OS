@@ -40,7 +40,7 @@ SRCS_X86_64 :=
 # -----------------------------------------------------------------------------
 # Architecture selection (default: aarch64)
 # -----------------------------------------------------------------------------
-ARCH ?= aarch64
+ARCH ?= x86_64
 
 # -----------------------------------------------------------------------------
 # AArch64 toolchain
@@ -50,10 +50,8 @@ LD_AARCH64      := aarch64-linux-gnu-ld
 OBJCOPY_AARCH64 := aarch64-linux-gnu-objcopy
 OBJDUMP_AARCH64 := aarch64-linux-gnu-objdump
 
-CFLAGS_AARCH64  := -std=c11 \
-                   -ffreestanding \
+CFLAGS_AARCH64  := -ffreestanding \
                    -nostdlib \
-                   -nostdinc \
                    -march=armv8-a \
                    -mgeneral-regs-only \
                    -Wall -Wextra \
@@ -68,10 +66,9 @@ QEMU_FLAGS_AARCH64 := \
                    -machine virt \
                    -cpu cortex-a53 \
                    -m 128M \
-                   -bios /usr/share/edk2/aarch64/OVMF.fd \
+                   -bios /usr/share/edk2-ovmf/x64/OVMF.4m.fd \
                    -cdrom build/aarch64/os.iso \
                    -serial stdio \
-                   -display none
 
 # -----------------------------------------------------------------------------
 # x86_64 toolchain (native — host is already x86_64)
@@ -81,10 +78,8 @@ LD_X86_64       := ld
 OBJCOPY_X86_64  := objcopy
 OBJDUMP_X86_64  := objdump
 
-CFLAGS_X86_64   := -std=c11 \
-                   -ffreestanding \
+CFLAGS_X86_64   := -ffreestanding \
                    -nostdlib \
-                   -nostdinc \
                    -m64 \
                    -mno-red-zone \
                    -mno-mmx \
@@ -103,10 +98,9 @@ QEMU_FLAGS_X86_64  := \
                    -machine q35 \
                    -cpu qemu64 \
                    -m 128M \
-                   -bios /usr/share/edk2/x64/OVMF.fd \
+                   -bios /usr/share/edk2-ovmf/x64/OVMF.4m.fd \
                    -cdrom build/x86_64/os.iso \
-                   -serial stdio \
-                   -display none
+                   -serial stdio
 
 # -----------------------------------------------------------------------------
 # Select variables based on ARCH
@@ -143,7 +137,8 @@ endif
 INCLUDES := \
     -I src \
     -I src/$(ARCH) \
-    -I src/$(ARCH)/limine
+    -I src/$(ARCH)/limine \
+    -I limine-protocol/include
 
 # -----------------------------------------------------------------------------
 # Output directories
@@ -177,9 +172,12 @@ both:
 # Link objects into kernel ELF, then wrap into bootable ISO
 $(ISO): $(KERNEL_ELF)
 	@mkdir -p $(ISO_DIR)/boot/limine
-	@cp $(KERNEL_ELF)             $(ISO_DIR)/boot/kernel.elf
-	@cp $(LIMINE_CONF)            $(ISO_DIR)/boot/limine/limine.conf
-	@cp limine/limine-uefi-cd.bin $(ISO_DIR)/boot/limine/
+	@mkdir -p $(ISO_DIR)/EFI/BOOT
+	@cp $(KERNEL_ELF)                 $(ISO_DIR)/boot/kernel.elf
+	@cp $(LIMINE_CONF)                $(ISO_DIR)/boot/limine/limine.conf
+	@cp limine/limine-uefi-cd.bin     $(ISO_DIR)/boot/limine/
+	@cp limine/BOOTX64.EFI            $(ISO_DIR)/EFI/BOOT/
+	@cp limine/BOOTAA64.EFI           $(ISO_DIR)/EFI/BOOT/
 	xorriso -as mkisofs \
 	    -b boot/limine/limine-uefi-cd.bin \
 	    -no-emul-boot \
