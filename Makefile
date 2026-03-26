@@ -30,7 +30,9 @@
 # Compiled for both architectures
 SRCS_COMMON := \
     src/kernel.c \
-    src/framebuffer/framebuffer.c
+    src/framebuffer/framebuffer.c \
+    src/framebuffer/fonts/font_8x16.c \
+    src/utils/log.c
 
 # AArch64-specific sources
 SRCS_AARCH64 :=
@@ -137,6 +139,7 @@ endif
 # Include paths
 # -----------------------------------------------------------------------------
 INCLUDES := \
+    -I include \
     -I src \
     -I src/$(ARCH) \
     -I src/$(ARCH)/limine \

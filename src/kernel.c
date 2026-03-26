@@ -9,6 +9,7 @@
 
 // common
 #include "framebuffer/framebuffer.h"
+#include <log.h>
 
 void halt(){
     #ifdef __x86_64__
