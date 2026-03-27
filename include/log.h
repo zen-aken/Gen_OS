@@ -22,5 +22,5 @@ typedef uint8_t kstatus;
 #define LOG_TYPE_ERROR   3
 
 void clear_screen();
-void fb_print(const char *str, uint32_t color);
+void print(const char *str, ...);
 void log(uint8_t log_level, const char* str, ...);

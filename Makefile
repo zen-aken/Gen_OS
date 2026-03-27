@@ -89,7 +89,8 @@ CFLAGS_X86_64   := -ffreestanding \
                    -mno-sse \
                    -mno-sse2 \
                    -Wall -Wextra \
-                   -O2 -g
+                   -O2 -g \
+                   -fno-stack-protector
 
 LDFLAGS_X86_64  := -nostdlib \
                    -T src/x86_64/linker.ld \

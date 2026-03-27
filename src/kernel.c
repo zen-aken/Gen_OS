@@ -11,9 +11,6 @@
 #include "drivers/framebuffer/framebuffer.h"
 #include <log.h>
 
-//* GLOBAL VARIABLES
-uint8_t log_level = 0; //? 
-
 void halt(){
     #ifdef __x86_64__
         asm volatile("hlt");
@@ -24,6 +21,8 @@ void halt(){
 
 void kernel_main(){
     framebuffer_init(framebuffer_request.response);
+    int x = 2025;
+    print("merhaba %d", x);
     while (1)
     {
         halt();

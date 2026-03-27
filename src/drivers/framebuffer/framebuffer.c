@@ -63,5 +63,4 @@ void framebuffer_init(struct limine_framebuffer_response *Framebuffer){
 
     //* Set first display for terminal output
     active_fb = Framebuffer->framebuffers[0];
-    log(LOG_INFO, "Framebuffer init success");
 }
