@@ -38,7 +38,7 @@ void fill(uint32_t color) {
  */
 void draw_char(uint8_t c, size_t line, size_t column, uint32_t color){
     if (color == 0) color = WHITE;
-    uint8_t (*character)[16] = &font8x16[c];
+    const uint8_t (*character)[16] = &font8x16[c];
     for (size_t row = 0; row < 16; row++)
     {
         for (size_t col = 0; col < 8; col++)

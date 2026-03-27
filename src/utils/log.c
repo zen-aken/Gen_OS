@@ -1,5 +1,5 @@
 #include "log.h"
-#include "framebuffer/framebuffer.h"
+#include "drivers/framebuffer/framebuffer.h"
 
 #define FONT_WIDTH   8
 #define FONT_HEIGHT  16
@@ -31,7 +31,7 @@ void put_char(char c, uint32_t color) {
 }
 
 //* framebuffer print
-void fb_print(char *str, uint32_t color) {
+void fb_print(const char *str, uint32_t color) {
     while (*str)
     {
         put_char(*str, color);
@@ -46,15 +46,20 @@ void clear_screen(){
     cursor_y = 0;
 }
 
-void log(uint8_t log_level, const char* str, ...) {
-    //! ADD FORMAT SUPPORT
+/**
+ * @param log_level (LEG_ERROR, LOG_WARNING, LOG_INFO, LOG_DEBUG)
+ * @param str
+ */
+void log(uint8_t log_type, const char* str, ...) {
+    // TODO: ADD LOG LEVEL SUPPORT
+    // TODO: ADD FORMAT SUPPORT
     uint32_t color;
-    if (log_level == LOG_ERROR) color = RED;
-    if (log_level == LOG_WARNING) color = YELLOW;
-    if (log_level == LOG_INFO) color = WHITE;
-    if (log_level == LOG_DEBUG) color = WHITE;
+    if (log_type == LOG_ERROR) color = RED;
+    if (log_type == LOG_WARNING) color = YELLOW;
+    if (log_type == LOG_INFO) color = WHITE;
+    if (log_type == LOG_DEBUG) color = WHITE;
     
     //* print channel
     fb_print(str, color);
-    //! ADD UART
+    // TODO: ADD UART
 }

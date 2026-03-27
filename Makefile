@@ -30,8 +30,8 @@
 # Compiled for both architectures
 SRCS_COMMON := \
     src/kernel.c \
-    src/framebuffer/framebuffer.c \
-    src/framebuffer/fonts/font_8x16.c \
+    src/drivers/framebuffer/framebuffer.c \
+    src/drivers/framebuffer/fonts/font_8x16.c \
     src/utils/log.c
 
 # AArch64-specific sources

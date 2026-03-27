@@ -7,9 +7,12 @@
 #include <aarch64/limine/limine_requests.h>
 #endif
 
-// common
-#include "framebuffer/framebuffer.h"
+//* COMMON
+#include "drivers/framebuffer/framebuffer.h"
 #include <log.h>
+
+//* GLOBAL VARIABLES
+uint8_t log_level = 0; //? 
 
 void halt(){
     #ifdef __x86_64__
