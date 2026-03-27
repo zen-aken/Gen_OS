@@ -7,6 +7,7 @@
 #define LINE_SPACING 1
 #define LINE_HEIGHT  (FONT_HEIGHT + LINE_SPACING)
 
+uint8_t log_level = 0;
 uint32_t cursor_x = 0;
 uint32_t cursor_y = 0;
 
@@ -47,19 +48,35 @@ void clear_screen(){
 }
 
 /**
- * @param log_level (LEG_ERROR, LOG_WARNING, LOG_INFO, LOG_DEBUG)
- * @param str
+ * @param log_level (LOG_ERROR, LOG_WARNING, LOG_INFO, LOG_DEBUG)
+ * @param str log message
  */
 void log(uint8_t log_type, const char* str, ...) {
-    // TODO: ADD LOG LEVEL SUPPORT
     // TODO: ADD FORMAT SUPPORT
     uint32_t color;
-    if (log_type == LOG_ERROR) color = RED;
-    if (log_type == LOG_WARNING) color = YELLOW;
-    if (log_type == LOG_INFO) color = WHITE;
-    if (log_type == LOG_DEBUG) color = WHITE;
+    if (log_type == LOG_TYPE_ERROR) color = RED;
+    if (log_type == LOG_TYPE_WARNING) color = YELLOW;
+    if (log_type == LOG_TYPE_INFO) color = WHITE;
+    if (log_type == LOG_TYPE_DEBUG) color = GREEN;
     
-    //* print channel
-    fb_print(str, color);
-    // TODO: ADD UART
+    if (log_level == LOG_LVL_SILENT)
+    {
+        return;
+    }
+    
+    if (log_level == LOG_LVL_VERBOSE)
+    {
+        fb_print(str, color);
+        // TODO: ADD UART
+        return;
+    }
+    
+    //* print only if message meets current log level
+    //* -1 offsets the difference between log_level and log_type scales (LOG_LVL_VERBOSE has no log_type equivalent)
+    if (log_type >= (log_level - 1))
+    {
+        fb_print(str, color);
+        // TODO: ADD UART
+        return;
+    }
 }
