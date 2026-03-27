@@ -21,8 +21,7 @@ void halt(){
 
 void kernel_main(){
     framebuffer_init(framebuffer_request.response);
-    int x = 2025;
-    print("merhaba %d", x);
+    
     while (1)
     {
         halt();
