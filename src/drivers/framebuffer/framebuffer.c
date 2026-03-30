@@ -51,7 +51,7 @@ void draw_char(uint8_t c, size_t line, size_t column, uint32_t color){
     }
 }
 
-void framebuffer_init(struct limine_framebuffer_response *Framebuffer){
+void init_framebuffer(struct limine_framebuffer_response *Framebuffer){
     //* NULL check
     if (Framebuffer == NULL || Framebuffer->framebuffer_count < 1)
     {
@@ -63,4 +63,5 @@ void framebuffer_init(struct limine_framebuffer_response *Framebuffer){
 
     //* Set first display for terminal output
     active_fb = Framebuffer->framebuffers[0];
+    log(LOG_TYPE_INFO, "[ FRAMEBUFFER ] Framebuffer initialized: %dx%d, %d bpp\n", active_fb->width, active_fb->height, active_fb->bpp);
 }

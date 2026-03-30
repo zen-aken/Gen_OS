@@ -38,7 +38,9 @@ SRCS_COMMON := \
 SRCS_AARCH64 :=
 
 # x86_64-specific sources
-SRCS_X86_64 :=
+SRCS_X86_64 := \
+    src/x86_64/interrupt/idt.c \
+    src/x86_64/interrupt/exception.c \
 
 # -----------------------------------------------------------------------------
 # Architecture selection (default: x86_64)
@@ -90,7 +92,8 @@ CFLAGS_X86_64   := -ffreestanding \
                    -mno-sse2 \
                    -Wall -Wextra \
                    -O2 -g \
-                   -fno-stack-protector
+                   -fno-stack-protector \
+                   -mno-80387
 
 LDFLAGS_X86_64  := -nostdlib \
                    -T src/x86_64/linker.ld \
@@ -105,7 +108,9 @@ QEMU_FLAGS_X86_64  := \
                    -bios /usr/share/edk2-ovmf/x64/OVMF.4m.fd \
                    -cdrom build/x86_64/os.iso \
                    -serial stdio \
-                   -d int
+                   -d int,cpu_reset \
+                   -no-reboot \
+                   -no-shutdown
 
 # -----------------------------------------------------------------------------
 # Select variables based on ARCH
@@ -143,7 +148,6 @@ INCLUDES := \
     -I include \
     -I src \
     -I src/$(ARCH) \
-    -I src/$(ARCH)/limine \
     -I limine-protocol/include
 
 # -----------------------------------------------------------------------------

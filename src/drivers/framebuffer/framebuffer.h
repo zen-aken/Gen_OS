@@ -21,6 +21,6 @@ enum basic_color : uint32_t {
     GRAY        = 0x808080  
 };
 
-void framebuffer_init(struct limine_framebuffer_response *Framebuffer);
+void init_framebuffer(struct limine_framebuffer_response *Framebuffer);
 void draw_char(uint8_t c, size_t line, size_t column, uint32_t color);
 void fill(uint32_t color);
