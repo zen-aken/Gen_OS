@@ -8,14 +8,14 @@
 
 //* Code segment selector for the kernel (from GDT) - this should match the value used in the GDT setup
 //* 0x28 came from limine
-#define KERNEL_CODE_SEGMENT 0x28
+#define KERNEL_CODE_SEGMENT 0x08
 
 //* Interrupt Stack Table index for the kernel (if using IST for certain exceptions)
 #define KERNEL_IST 0
 
 struct InterruptDescriptor64 IDT[IDT_ENTRY_COUNT];
 
-uint8_t kernel_exception_attiributes = (1 << 7) | (0 << 5) | (0 << 4) | (0xE);  // Present, DPL=0, Type=0xE (Interrupt Gate)
+uint8_t kernel_exception_attiributes = (1 << 7) | (0 << 5) | (0 << 4) | (0xE); // Present, DPL=0, Type=0xE (Interrupt Gate)
 
 /**
  * @brief Sets an entry in the Interrupt Descriptor Table (IDT) for x86_64 architecture.
@@ -25,9 +25,10 @@ uint8_t kernel_exception_attiributes = (1 << 7) | (0 << 5) | (0 << 4) | (0xE);  
  * @param selector The code segment selector in the GDT that the handler will use.
  * @param ist The Interrupt Stack Table offset (0-7) if using IST for this entry, otherwise 0.
  */
-void set_idt_entry(size_t index, uint64_t addr, uint8_t attributes, uint16_t selector, uint8_t ist) {
+void set_idt_entry(size_t index, uint64_t addr, uint8_t attributes, uint16_t selector, uint8_t ist)
+{
     struct InterruptDescriptor64 entry;
-    entry.offset_1 = addr & 0xFFFF;             // Set offset bits 0..15  
+    entry.offset_1 = addr & 0xFFFF;             // Set offset bits 0..15
     entry.offset_2 = (addr >> 16) & 0xFFFF;     // Set offset bits 16..31
     entry.offset_3 = (addr >> 32) & 0xFFFFFFFF; // Set offset bits 32..63
     entry.type_attributes = attributes;         // Set the type and attributes
@@ -39,15 +40,19 @@ void set_idt_entry(size_t index, uint64_t addr, uint8_t attributes, uint16_t sel
 }
 
 // Default exception handler for unhandled exceptions - logs the error and halts the system
-void default_exception_handler() {
+void default_exception_handler()
+{
     log(LOG_TYPE_ERROR, "Unhandled exception occurred! Halting the system.");
-    while (1) {
+    while (1)
+    {
         halt();
     }
 }
 
-void init_idt() {
-    for (int i = 0; i < IDT_ENTRY_COUNT; i++) {
+void init_idt()
+{
+    for (int i = 0; i < IDT_ENTRY_COUNT; i++)
+    {
         set_idt_entry(i, (uint64_t)default_exception_handler, kernel_exception_attiributes, KERNEL_CODE_SEGMENT, KERNEL_IST);
     }
     set_idt_entry(0, (uint64_t)kill_app_exception_handler, kernel_exception_attiributes, KERNEL_CODE_SEGMENT, KERNEL_IST);

@@ -41,6 +41,7 @@ SRCS_AARCH64 :=
 SRCS_X86_64 := \
     src/x86_64/interrupt/idt.c \
     src/x86_64/interrupt/exception.c \
+    src/x86_64/cpu/gdt.c
 
 # -----------------------------------------------------------------------------
 # Architecture selection (default: x86_64)
