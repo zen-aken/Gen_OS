@@ -32,10 +32,14 @@ SRCS_COMMON := \
     src/kernel.c \
     src/drivers/framebuffer/framebuffer.c \
     src/drivers/framebuffer/fonts/font_8x16.c \
+    src/drivers/ps2_keyboard.c \
+    src/drivers/pit.c \
     src/utils/log.c \
+    src/utils/string.c \
     src/panic.c \
     src/mm/pmm.c \
-    src/mm/vmm.c
+    src/mm/vmm.c \
+    src/mm/heap.c
 
 # AArch64-specific sources
 SRCS_AARCH64 :=
