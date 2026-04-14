@@ -21,9 +21,9 @@ void set_pixel(uint32_t color, size_t x, size_t y){
 
 // fill whole screen with one color
 void fill(uint32_t color) {
-    for (size_t y = 0; y < active_fb->height - 1; y++)
+    for (size_t y = 0; y < active_fb->height; y++)
     {
-        for (size_t x = 0; x < active_fb->width - 1; x++)
+        for (size_t x = 0; x < active_fb->width; x++)
         {
             set_pixel(color, x, y);
         }

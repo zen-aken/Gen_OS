@@ -19,6 +19,14 @@ uint32_t cursor_y = 0;
  * @param color Text color
  */
 void put_char(char c, uint32_t color) {
+    // bounds check - prevent drawing off screen
+    if (active_fb == NULL) return;
+    if (cursor_y >= active_fb->height) {
+        // scroll or wrap - simple: reset to top
+        cursor_y = 0;
+        fill(BLACK);
+    }
+
     // new line parameter
     if (c == '\n')
     {
@@ -73,14 +81,33 @@ void clear_screen() {
 void dec_to_str(char buf[256], size_t *buf_index, int dec) {
     if (dec == 0)
     {
-        buf[(*buf_index)++] = '0';
+        if (*buf_index < 255) buf[(*buf_index)++] = '0';
         return;
     }
     
     if (dec < 0)
     {
-        buf[(*buf_index)++] = '-';
-        dec = dec * (-1);
+        if (*buf_index < 255) buf[(*buf_index)++] = '-';
+        // Use unsigned arithmetic to avoid INT_MIN overflow
+        uint32_t udec = (uint32_t)(-(int64_t)dec);
+        size_t start = *buf_index;
+        while (udec != 0)
+        {
+            int number = udec % 10;
+            udec = udec / 10;
+            if (*buf_index < 255) buf[(*buf_index)++] = '0' + number;
+        }
+        size_t end = *buf_index - 1;
+        while (start < end)
+        {
+            uint8_t first_number = buf[start];
+            uint8_t last_number = buf[end];
+            buf[end] = first_number;
+            buf[start] = last_number;
+            start++;
+            end--;
+        }
+        return;
     }
 
     size_t start = *buf_index;
@@ -89,7 +116,7 @@ void dec_to_str(char buf[256], size_t *buf_index, int dec) {
     {
         int number = dec % 10;
         dec = dec / 10;
-        buf[(*buf_index)++] = '0' + number;
+        if (*buf_index < 255) buf[(*buf_index)++] = '0' + number;
     }
     
     size_t end = *buf_index - 1;
@@ -117,7 +144,7 @@ void dec_to_str(char buf[256], size_t *buf_index, int dec) {
 void uint_to_str(char buf[256], size_t *buf_index, uint64_t uint) {
     if (uint == 0)
     {
-        buf[(*buf_index)++] = '0';
+        if (*buf_index < 255) buf[(*buf_index)++] = '0';
         return;
     }
 
@@ -127,7 +154,7 @@ void uint_to_str(char buf[256], size_t *buf_index, uint64_t uint) {
     {
         int number = uint % 10;
         uint = uint / 10;
-        buf[(*buf_index)++] = '0' + number;
+        if (*buf_index < 255) buf[(*buf_index)++] = '0' + number;
     }
     
     size_t end = *buf_index - 1;
@@ -152,12 +179,12 @@ void uint_to_str(char buf[256], size_t *buf_index, uint64_t uint) {
  * @param value Hexadecimal value to convert
  */
 void hex_to_str(char buf[256], size_t *buf_index, uint64_t hex) {
-    buf[(*buf_index)++] = '0';
-    buf[(*buf_index)++] = 'x';
+    if (*buf_index < 255) buf[(*buf_index)++] = '0';
+    if (*buf_index < 255) buf[(*buf_index)++] = 'x';
 
     if (hex == 0x0)
     {
-        buf[(*buf_index)++] = '0';
+        if (*buf_index < 255) buf[(*buf_index)++] = '0';
         return;
     }
     
@@ -169,7 +196,7 @@ void hex_to_str(char buf[256], size_t *buf_index, uint64_t hex) {
     {
         uint8_t value = hex % 16;
         hex /= 16;
-        buf[(*buf_index)++] = hex_table[value];
+        if (*buf_index < 255) buf[(*buf_index)++] = hex_table[value];
     }
     size_t end = *buf_index - 1;
 
@@ -210,14 +237,15 @@ void vsn_print(char buf[256], const char *str, va_list arg_list) {
             {        
             case 'c': // char
                 c = (char)va_arg(arg_list, int);
-                buf[index++] = c;
+                if (index < 255) buf[index++] = c;
                 break;
                 
             case 's': // string
                 s = va_arg(arg_list, char*);
                 while (*s)
                 {
-                    buf[index++] = *s++;
+                    if (index < 255) buf[index++] = *s;
+                    s++;
                 }
                 break;
                 
@@ -236,14 +264,14 @@ void vsn_print(char buf[256], const char *str, va_list arg_list) {
                 break;
             
             default:
-                buf[index++] = '?';
+                if (index < 255) buf[index++] = '?';
                 break;
             }
         } else {
-            buf[index++] = *str++;
+            if (index < 255) buf[index++] = *str++;
         }
     }
-    buf[index++] = '\0';
+    buf[index < 256 ? index : 255] = '\0';
 }
 
 /**
@@ -268,7 +296,7 @@ void printf(const char *str, va_list arg_list, uint32_t color) {
  * @param ... Additional arguments for formatting
  */
 void log(uint8_t log_type, const char* str, ...) {
-    uint32_t color;
+    uint32_t color = WHITE;
     va_list arg_list;
     va_start(arg_list, str);
 
@@ -301,4 +329,6 @@ void log(uint8_t log_type, const char* str, ...) {
         va_end(arg_list);
         return;
     }
+
+    va_end(arg_list);
 }

@@ -7,7 +7,7 @@
 #define IDT_ENTRY_COUNT 256
 
 //* Code segment selector for the kernel (from GDT) - this should match the value used in the GDT setup
-//* 0x28 came from limine
+//* Limine uses 0x28 for 64-bit code; after init_gdt() runs, our GDT places it at 0x08
 #define KERNEL_CODE_SEGMENT 0x08
 
 //* Interrupt Stack Table index for the kernel (if using IST for certain exceptions)
@@ -40,9 +40,9 @@ void set_idt_entry(size_t index, uint64_t addr, uint8_t attributes, uint16_t sel
 }
 
 // Default exception handler for unhandled exceptions - logs the error and halts the system
-void default_exception_handler()
+__attribute__((interrupt)) void default_exception_handler(struct interrupt_frame* frame)
 {
-    log(LOG_TYPE_ERROR, "Unhandled exception occurred! Halting the system.");
+    log(LOG_TYPE_ERROR, "[ INTERRUPT ] Unhandled exception occurred! Halting the system.\n");
     while (1)
     {
         halt();
