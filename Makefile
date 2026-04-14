@@ -34,7 +34,8 @@ SRCS_COMMON := \
     src/drivers/framebuffer/fonts/font_8x16.c \
     src/utils/log.c \
     src/panic.c \
-    src/mm/pmm.c
+    src/mm/pmm.c \
+    src/mm/vmm.c
 
 # AArch64-specific sources
 SRCS_AARCH64 :=

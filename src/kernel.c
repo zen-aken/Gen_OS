@@ -13,6 +13,7 @@
 #include <halt.h>
 #include <log.h>
 #include "mm/pmm.h"
+#include "mm/vmm.h"
 #include "drivers/framebuffer/framebuffer.h"
 
 #define KERNEL_VERSION "0.1.0"
@@ -42,6 +43,38 @@ void kernel_main()
         log(LOG_TYPE_INFO, "[ PMM ] Test page freed successfully\n");
     }
     log(LOG_TYPE_INFO, "[ PMM ] Free pages available: %d\n", pmm_free_count());
+
+    //* Initialize virtual memory manager
+    log(LOG_TYPE_INFO, "[ VMM ] Initializing virtual memory...\n");
+    vmm_init();
+
+    //* Test VMM - map a page in user half
+    uint64_t test_vaddr = 0x1000000000ULL;  // User space address (above 4GB)
+    log(LOG_TYPE_INFO, "[ VMM ] Testing allocation at vaddr 0x%x\n", test_vaddr);
+
+    if (vmm_alloc(test_vaddr, VMM_KERNEL_FLAGS)) {
+        log(LOG_TYPE_INFO, "[ VMM ] Successfully allocated and mapped page\n");
+
+        // Write test pattern
+        uint32_t *test_ptr = (uint32_t *)test_vaddr;
+        *test_ptr = 0xDEADBEEF;
+
+        if (*test_ptr == 0xDEADBEEF) {
+            log(LOG_TYPE_INFO, "[ VMM ] Write/read test PASSED (0x%x)\n", *test_ptr);
+        } else {
+            log(LOG_TYPE_ERROR, "[ VMM ] Write/read test FAILED!\n");
+        }
+
+        // Get physical address
+        uint64_t phys = vmm_get_phys(test_vaddr);
+        log(LOG_TYPE_INFO, "[ VMM ] Virtual 0x%x -> Physical 0x%x\n", test_vaddr, phys);
+
+        // Unmap and free
+        vmm_free(test_vaddr);
+        log(LOG_TYPE_INFO, "[ VMM ] Page unmapped and freed\n");
+    } else {
+        log(LOG_TYPE_ERROR, "[ VMM ] Failed to allocate page!\n");
+    }
 
     log(LOG_TYPE_INFO, "[ KERNEL ] Initialization complete.\n");
     log(LOG_TYPE_INFO, "[ KERNEL ] Press any key to test interrupts...\n");
