@@ -19,6 +19,14 @@ uint32_t cursor_y = 0;
  * @param color Text color
  */
 void put_char(char c, uint32_t color) {
+    // bounds check - prevent drawing off screen
+    if (active_fb == NULL) return;
+    if (cursor_y >= active_fb->height) {
+        // scroll or wrap - simple: reset to top
+        cursor_y = 0;
+        fill(BLACK);
+    }
+
     // new line parameter
     if (c == '\n')
     {
