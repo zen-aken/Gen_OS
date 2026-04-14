@@ -1,8 +1,5 @@
 #include "gdt.h"
 
-#define KERNEL_CODE 0x08
-#define KERNEL_DATA 0x10
-
 struct GDTEntry gdt[3];
 
 void set_gdt_entry(int i, uint8_t access, uint8_t flags)

@@ -1,3 +1,5 @@
+#pragma once
+
 /**
  * @brief Halt the CPU until the next interrupt occurs.
  * This function is architecture-specific and uses the appropriate assembly instruction to halt the CPU.
@@ -6,7 +8,7 @@
 static inline void halt(){
     #ifdef __x86_64__
         asm volatile("hlt");
-    #elif __aarch64__
+    #elif defined(__aarch64__)
         asm volatile("wfi");
     #endif
 }

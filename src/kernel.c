@@ -16,8 +16,8 @@
 void kernel_main()
 {
     init_framebuffer(framebuffer_request.response);
-    init_idt();
     init_gdt();
+    init_idt();
 
     // Interrupt test code
     // Division by zero (0)
@@ -33,8 +33,8 @@ void kernel_main()
     // asm volatile("ud2");
 
     // Page fault (14)
-    volatile int *ptr = (int *)0xdeadbeef;
-    *ptr = 42;
+    // volatile int *ptr = (int *)0xdeadbeef;
+    // *ptr = 42;
 
     while (1)
     {
