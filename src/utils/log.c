@@ -236,7 +236,8 @@ void vsn_print(char buf[256], const char *str, va_list arg_list) {
                 s = va_arg(arg_list, char*);
                 while (*s)
                 {
-                    if (index < 255) buf[index++] = *s++;
+                    if (index < 255) buf[index++] = *s;
+                    s++;
                 }
                 break;
                 
