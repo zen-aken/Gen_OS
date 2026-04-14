@@ -12,6 +12,7 @@
 //* COMMON
 #include <halt.h>
 #include <log.h>
+#include "mm/pmm.h"
 #include "drivers/framebuffer/framebuffer.h"
 
 #define KERNEL_VERSION "0.1.0"
@@ -29,6 +30,18 @@ void kernel_main()
     log(LOG_TYPE_INFO, "  %s Kernel v%s\n", KERNEL_NAME, KERNEL_VERSION);
     log(LOG_TYPE_INFO, "  Build date: %s %s\n", __DATE__, __TIME__);
     log(LOG_TYPE_INFO, "========================================\n\n");
+
+    //* Initialize physical memory manager
+    pmm_init();
+
+    //* Test PMM
+    uint64_t test_page = pmm_alloc_page();
+    if (test_page != 0) {
+        log(LOG_TYPE_INFO, "[ PMM ] Test page allocated: 0x%x\n", test_page);
+        pmm_free_page(test_page);
+        log(LOG_TYPE_INFO, "[ PMM ] Test page freed successfully\n");
+    }
+    log(LOG_TYPE_INFO, "[ PMM ] Free pages available: %d\n", pmm_free_count());
 
     log(LOG_TYPE_INFO, "[ KERNEL ] Initialization complete.\n");
     log(LOG_TYPE_INFO, "[ KERNEL ] Press any key to test interrupts...\n");
