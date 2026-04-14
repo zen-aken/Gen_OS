@@ -6,6 +6,13 @@
 //? IDT entry count for x86_64 architecture - typically 256 entries to cover all exceptions and interrupts
 #define IDT_ENTRY_COUNT 256
 
+//* IRQ offsets (PIC remapped)
+#define IRQ0_OFFSET 32
+
+//* External handlers (from drivers)
+extern void pit_irq0_handler(void);
+extern __attribute__((interrupt)) void keyboard_irq1_handler(struct interrupt_frame *frame);
+
 //* Code segment selector for the kernel (from GDT) - this should match the value used in the GDT setup
 //* Limine uses 0x28 for 64-bit code; after init_gdt() runs, our GDT places it at 0x08
 #define KERNEL_CODE_SEGMENT 0x08
@@ -71,6 +78,10 @@ void init_idt()
     set_idt_entry(13, (uint64_t)general_protection_fault_exception_handler, kernel_exception_attiributes, KERNEL_CODE_SEGMENT, KERNEL_IST);
     set_idt_entry(14, (uint64_t)page_fault_exception_handler, kernel_exception_attiributes, KERNEL_CODE_SEGMENT, KERNEL_IST);
     //! [RESERVED] set_idt_entry(15, (uint64_t)0, 0, 0, 0);
+
+    // IRQ handlers (remapped to IDT entries 32-47)
+    set_idt_entry(IRQ0_OFFSET + 0, (uint64_t)pit_irq0_handler, kernel_exception_attiributes, KERNEL_CODE_SEGMENT, KERNEL_IST);
+    set_idt_entry(IRQ0_OFFSET + 1, (uint64_t)keyboard_irq1_handler, kernel_exception_attiributes, KERNEL_CODE_SEGMENT, KERNEL_IST);
 
     struct IDTR idtr;
     idtr.addr = (uint64_t)IDT;
